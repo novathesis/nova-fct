@@ -1,0 +1,315 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% nova/itqb/schl-defaults.ldf
+%% NOVA thesis document template
+%%
+%% This work is licensed under the
+%% The LaTeX project public license (LPPL), version 1.3c
+%% To view a copy of this license, visit
+%% https://www.latex-project.org/lppl/lppl-1-3c/
+%%
+%% Authors / Contributors:
+%%      - João Lourenço <joao.lourenco@itqb.unl.pt>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\typeout{NT FILE nova/itqb/schl-defaults.ldf}%
+
+
+% ITQB-NOVA specific customization
+\ntmemoirsetup{b5paper} % Does not work
+% \setstocksize{9.8in}{6.9in}
+% \settrimmedsize{\stockheight}{\stockwidth}{*}
+% \setlrmarginsandblock{3.5cm}{2.5cm}{*}
+% \setulmarginsandblock{2.5cm}{3.0cm}{*}
+% % \setlrmargins{0in}{*}{*}
+% % \setulmargins{0.8in}{*}{*}
+% \paperwidth=\stockwidth
+% \paperheight=\stockheight
+% \checkandfixthelayout
+
+\openany
+\ntsetup{print/secondcover=true}
+
+% Loading of fonts must be delayed until class "novathesis" is loaded
+\AtEndPreamble{%
+  \RequirePackage{gillius2}%
+}
+
+\newdata{oeiras}
+\oeiras():={\mbox{O}eiras}
+
+% Faculty / School
+\school(pt):={Instituto de Tecnologia Química e Biológica António Xavier}
+\school(en):={Instituto de Tecnologia Química e Biológica António Xavier}
+\school(fr):={Instituto de Tecnologia Química e Biológica António Xavier}
+\school(it):={Instituto de Tecnologia Química e Biológica António Xavier}
+\school(address):={\textbf{ITQB NOVA, Avenida da República, 2780-157 \theoeiras(), Portugal} $|$ Tel +351 214 469 100 $|$ itqb.unl.pt}
+
+\school(logo,neg):={nova-itqb-logo-mono/90}
+% \school(logo,neg):={nova-itqb-logo-negative}
+
+% Comiittee printing order
+\committeeorder():={c,r,a,m}%
+
+% Cover background images
+% \thesiscover(phd,1-1,bgcolor):={black}
+% \thesiscover(phd,1-1,textcolor):={white}
+% \thesiscover(phd,2-1,textcolor):={black}
+% \thesiscover(1-1,image):={front}
+% \thesiscover(N-2,image):={back}
+% \thesiscover(phd,N-2,image):={nova-itqb-phd-cover-back}
+% \thesiscover(phd,spine,image):={nova-itqb-phd-spine}
+%
+% \thesiscover(msc,1-1,bgcolor):={black}
+% \thesiscover(msc,1-1,textcolor):={white}
+% \thesiscover(msc,2-1,textcolor):={black}
+% \thesiscover(msc,1-1,image):={nova-itqb-cover}
+% \thesiscover(msc,N-2,image):={nova-itqb-cover-back}
+
+\providecolor{itqbgray207}{RGB}{207,207,207}
+\providecolor{itqbgray189}{RGB}{189,189,189}
+\providecolor{itqbgray127}{RGB}{127,127,127}
+\providecolor{itqbgray89}{RGB}{89,89,89}
+\providecolor{itqbgray38}{RGB}{38,38,38}
+\providecolor{itqbgray25}{RGB}{25,25,25}
+\providecolor{itqbgreen}{RGB}{39,177,153}
+
+\spine(bg,color)={\theitqbcolor(\option{/novathesis/nova/itqb/cover/color},spine)}
+% \thesiscover(spine,image)={spine}
+
+% Spine info
+\spine(logo)={\theschool(logo,neg)}
+
+% \spine(logo,phd,angle)={90}
+
+% \spine(logo,msc)={\theschool(logo,neg)}
+% \spine(logo,msc,angle)={90}
+
+\spine(order):={date,title,author,logo}
+
+% \spine(author)={\thedocauthor(name,short)}
+% \spine(title)={\textbf{\thedoctitle(\@LANG@COVER,main)}}
+
+\spine(date)={\textcolor{itqbgray207}{\theoeiras()},
+              \printisodate{\thentdocdate(submission,year)-\thentdocdate(submission,month)}}
+% \spine(date2):={\color{itqbgray207}{\theoeiras(),} %
+%                \thentdocdate(submission,month,text), \thentdocdate(submission,year)}
+
+% \spine(text,angle)={0}
+\spine(box,text,color)={white}
+% \spine(box,color)={blue}
+% \spine(box,spacing)={0.5cm}
+% \spine(box,margin)={0.5mm}
+
+% \spine(box,logo,top)={4.5mm}
+\spine(box,logo,len)={3.5cm}
+\spine(box,logo,align)={c}
+
+% \spine(box,author,top)={\thespine(box,logo,top)+\thespine(box,logo,len)+\thespine(box,spacing)}
+\spine(box,author,len)={4.0cm}
+
+% \spine(box,title,top)={\thespine(box,author,top)+\thespine(box,author,len)+\thespine(box,spacing)}
+\spine(box,title,margin,left):={10pt}
+\spine(box,title,len)={11.5cm}
+% \spine(box,title,align)={l}
+% \spine(box,author,align)={l}
+
+% \spine(box,date,top)={\thespine(box,title,top)+\thespine(box,title,len)+\thespine(box,spacing)}
+\spine(box,date,len)={4.5cm}
+% \spine(box,lodatego,align)={l}
+
+
+% Set margins for "normal" pages
+\margin(screen,top):={3.5cm}
+\margin(screen,bottom):={2.5cm}
+\margin(screen,left):={3.0cm}
+\margin(screen,right):={3.0cm}
+\margin(paper,top):={3.5cm}
+\margin(paper,bottom):={2.5cm}
+\margin(paper,left):={3.0cm}
+\margin(paper,right):={3.0cm}
+
+% Set margins for cover pages
+\margin(cover,top):={1.5cm}
+\margin(cover,bottom):={0.8cm}
+\margin(cover,left):={1.7cm}
+\margin(cover,right):={1.7cm}
+
+
+\newdata{itqbcolor}
+\itqbcolor(gray,front,bar):={itqbgray89}
+\itqbcolor(gray,front,text):={white}
+\itqbcolor(gray,front,text2):={itqbgray207}
+\itqbcolor(gray,front,date):={itqbgray127}
+\itqbcolor(gray,front,rectangle):={itqbgray89}
+\itqbcolor(gray,back,text):={itqbgray38}
+\itqbcolor(gray,spine):={itqbgray38}
+\itqbcolor(gray,back):={itqbgray38}
+\itqbcolor(green,front,bar):={itqbgreen}
+\itqbcolor(green,front,text):={white}
+\itqbcolor(green,front,date):={itqbgray127}
+\itqbcolor(green,front,rectangle):={itqbgreen}
+\itqbcolor(green,back,text):={itqbgreen}
+\itqbcolor(green,front,text2):={itqbgray207}
+\itqbcolor(green,spine):={itqbgreen}
+\itqbcolor(green,back):={itqbgreen}
+
+\newdata{region}
+\region(itqb,top):={-\paperheight+19.25mm}
+\region(itqb,bottom):={\theregion(itqb,top)-10.5mm}
+\region(itqb,left):={10mm}
+\region(itqb,right):={\paperwidth}
+\region(itqb,round):={0.4cm}
+\region(photo,top):={-81mm}
+\region(photo,left):={1.5cm}
+\region(photo,height):={11.0cm}
+% \region(photo,height):={13.2cm}
+\region(photo,width)={\paperwidth-\theregion(photo,left)-1.9cm}
+
+\dissertationstring(phd,en):={Dissertation presented to obtain the \textbf{Ph.D degree in}}
+\dissertationstring(phd,pt):={Dissertação apresentada para obter o \textbf{grau de Doutor em}}
+\dissertationstring(msc,en):={Dissertation presented to obtain the \textbf{M.Sc degree in}}
+\dissertationstring(msc,pt):={Dissertação apresentada para obter o \textbf{grau de Mestre em}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Draw the cover pages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\NTAddToHook{cover/1-1/text/pre}{%
+  \sffamily%
+}
+\NTAddToHook{cover/2-1/text/pre}{%
+  \sffamily%
+}
+\NTAddToHook{cover/N-2/text/pre}{%
+  \sffamily%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% COVER 1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\@resizetowidth}[2]{%
+  \setbox0=\hbox{#2}%
+  \@tempdima=\dimexpr#1%
+  \ifdim\wd0>\@tempdima\relax%
+    \resizebox{\@tempdima}{!}{\box0}%
+  \else
+    \box0%
+  \fi
+}
+
+
+\ntaddtocover[tikz]{1-1}{%
+  \sffamily%
+  \setbox0=\hbox{%
+      \scalebox{2.15}{%
+	  	  \fontsize{19}{19}\selectfont\bfseries\thentdocdate(submission,year)}}
+  \begin{scope}[shift=(current page.north west), xshift=\@MRGN@left]
+    % Logo at top-left
+    \node [inner sep=0pt, anchor=north west, xshift=0, yshift=-\@MRGN@top]
+                    {\includegraphics[height=1.7cm]{nova-itqb-logo}};
+    % Date at top-right
+    \node [inner sep=0pt,anchor=east,
+           xshift=\paperwidth-\@MRGN@left-10mm,
+           yshift=-\@MRGN@top-2.5mm,
+           color={\expanded{%
+		   		\theitqbcolor(\option{/novathesis/nova/itqb/cover/color},front,date)}},
+		   rotate=90,
+		  ] (date)
+		  {\fontsize{19}{19}\selectfont%
+		   \textbf{\thentdocdate(submission,year)}};
+	\draw[line width=0.7mm, 
+		  \expanded{%
+		   		\theitqbcolor(\option{/novathesis/nova/itqb/cover/color},front,date)}
+		 ] ($(date.north west) - (2mm,0)$) -- ($(date.north east) - (2mm,0)$);
+    % Title
+    \node [inner sep=0pt, anchor=south west, yshift=-\@MRGN@top-38.75mm]
+                    {\fontsize{19}{19}\selectfont%
+                     \parbox{\dimexpr\paperwidth-\@MRGN@left-\@MRGN@right}%
+                            {\@resizetowidth{\linewidth}%
+                                            {\textbf{%
+											   \begin{tabular}{@{}l@{}}%
+											   \thedoctitle(\@LANG@COVER,main,cover)%
+											   \end{tabular}%
+											 }}}};
+    % Subtitle
+    \node [inner sep=0pt, anchor=west, yshift=-\@MRGN@top-44.3mm]
+                    {\fontsize{16.0}{16.0}\selectfont%front.pdf
+                     \parbox{\paperwidth-\@MRGN@left-\@MRGN@right}%
+                            {\@resizetowidth{\linewidth}%
+                                            {\thedoctitle(\@LANG@COVER,sub)}}};
+    % Author
+    \node [inner sep=0pt, anchor=west, yshift=-\@MRGN@top-54.7mm]
+                    {\fontsize{15}{15}\selectfont\textbf{\thedocauthor(name)}};
+    % Photo
+    \edef\@itqbheight{\theregion(photo,height)}
+    \edef\@itqbwidth{\theregion(photo,width)}
+    \draw [path picture={\node at (path picture bounding box.center)
+                    {\includegraphics[height=\@itqbheight]{nova-itqb-photo}};},
+                    rounded corners=8mm, xshift=-\@MRGN@left]
+                    ({\theregion(photo,left)},\theregion(photo,top))
+                    rectangle
+                    (\expanded{\theregion(photo,left)+\theregion(photo,width)},
+                               \expanded{\theregion(photo,top)-\theregion(photo,height)});
+    % Dissertation string
+    \node [inner sep=0pt,anchor=west, yshift={\theregion(itqb,top)+28.75mm}]
+                    {\fontsize{14}{14}\selectfont
+                     \thedissertationstring(\option{/@nt/document/docclass},%
+                                            \@LANG@COVER)};
+    % Major field
+    \node [inner sep=0pt,anchor=west, yshift={\theregion(itqb,top)+20.0mm}]
+                    {\fontsize{15}{15}\selectfont
+                     \themajorfield(\@LANG@COVER)};
+    % Date
+    \node [inner sep=0pt,anchor=west, yshift={\theregion(itqb,top)+8.4mm}]
+                    {\fontsize{12}{12}\selectfont
+                     \mbox{O}eiras,
+                     \printisodate{\thentdocdate(submission,year)-\thentdocdate(submission,month)}};
+    % Rectangle
+    \fill [xshift=-\@MRGN@left,
+           \expanded{%
+		   	\theitqbcolor(\option{/novathesis/nova/itqb/cover/color},front,rectangle)}
+		   ]
+                   (\theregion(itqb,left),{\theregion(itqb,top)})
+                -- (\theregion(itqb,right),{\theregion(itqb,top)})
+                -- (\theregion(itqb,right),{\theregion(itqb,bottom)})
+                {[rounded corners={\theregion(itqb,round)}]
+                -- (\theregion(itqb,left),{\theregion(itqb,bottom)})}
+                -- cycle {};
+    % Text in rectangle
+    \node [inner sep=0pt, anchor=west, xshift={1mm},
+                          yshift={(\theregion(itqb,bottom)+\theregion(itqb,top))/2}]
+                  {\fontsize{9}{9}\selectfont
+                  {\color{white}INSTITUTO DE TECNOLOGIA QUÍMICA E BIOLÓGICA }
+                  {\color{itqbgray207}ANTÓNIO XAVIER}
+                  {\color{white}$|$ UNIVERSIDADE NOVA DE LISBOA}};
+  \end{scope}
+}
+
+\ntaddtocover[tikz]{N-2}{%
+  \sffamily%
+  \setbox0=\hbox{\scalebox{2}{\bfseries\thentdocdate(submission,year)}}
+  \begin{scope}[shift=(current page.north west)]
+    % Filling back cover
+    \fill [color={\expanded{\theitqbcolor(\option{/novathesis/nova/itqb/cover/color},back)}}]
+                    (0,0) rectangle (\paperwidth,-\paperheight);
+    % Logo above rectangle
+    \node [inner sep=0pt,anchor=north west,xshift=11mm,yshift={3.5cm+\theregion(itqb,top)}]
+                    {\includegraphics[width=11.7cm]{nova-itqb-logo-mono}};
+    \begin{scope}[xscale=-1,xshift=-\paperwidth]
+      % Rectangle
+      \fill [color=white] (\theregion(itqb,left),{\theregion(itqb,top)})
+                  -- (\theregion(itqb,right),{\theregion(itqb,top)})
+                  -- (\theregion(itqb,right),{\theregion(itqb,bottom)})
+                  {[rounded corners={\theregion(itqb,round)}]
+                  -- (\theregion(itqb,left),{\theregion(itqb,bottom)})}
+                  -- cycle {};
+      % Text in rectangle
+    \node [inner sep=0pt, anchor=west, xshift={-\paperwidth+11mm},
+                          yshift={(\theregion(itqb,bottom)+\theregion(itqb,top))/2},
+                          color={\theitqbcolor(\option{/novathesis/nova/itqb/cover/color},back,text)}]
+                    {\fontsize{10}{10}\selectfont
+                     \theschool(address)};
+    \end{scope}
+  \end{scope}
+}
