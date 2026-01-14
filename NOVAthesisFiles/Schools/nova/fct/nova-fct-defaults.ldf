@@ -36,7 +36,7 @@
 
 % NOVA FCT specific customization
 \openany
-\ntsetup{print/secondcover=true}
+\ntsetup{print/frontpage=true}
 
 % Loading of fonts must be delayed until class "novathesis" is loaded
 \AtEndPreamble{%
@@ -44,16 +44,31 @@
 }
 
 % Faculty / School
-\school(pt):={Faculdade de Ciências e Tecnologia}
-\school(en):={NOVA School of Science and Technology}
-\school(fr):={NOVA School of Science and Technology}
-\school(it):={NOVA School of Science and Technology}
+\school(cat) := {NOVA School of School and Technology}
+\school(cz)  := {NOVA School of School and Technology}
+\school(de)  := {NOVA School of School and Technology}
+\school(dk)  := {NOVA School of School and Technology}
+\school(en)  := {NOVA School of School and Technology}
+\school(es)  := {NOVA School of School and Technology}
+\school(fr)  := {NOVA School of School and Technology}
+\school(gr)  := {NOVA School of School and Technology}
+\school(it)  := {NOVA School of School and Technology}
+\school(nl)  := {NOVA School of School and Technology}
+\school(pl)  := {NOVA School of School and Technology}
+\school(pt)  := {Faculdade de Ciências e Tecnologia}
+\school(sk)  := {NOVA School of School and Technology}
+\school(uk)  := {NOVA School of School and Technology}
+
 \school(logo,pt):={nova-fct-logo-pt}
-\school(logo,neg,pt):={nova-fct-logo-negative-pt}
 \school(logo,en):={nova-fct-logo-en}
+\ifdatadefined{school}(logo,\@LANG@COVER)
+  {\school(logo):={\theschool(logo,\@LANG@COVER)}}
+  {\school(logo):={\theschool(logo,en)}}
+\school(logo,neg,pt):={nova-fct-logo-negative-pt}
 \school(logo,neg,en):={nova-fct-logo-negative-en}
-\school(logo):={\theschool(logo,\@LANG@COVER)}
-\school(logo,neg):={\theschool(logo,neg,\@LANG@COVER)}
+\ifdatadefined{school}(logo,neg,\@LANG@COVER)
+  {\school(logo,neg):={\theschool(logo,neg,\@LANG@COVER)}}
+  {\school(logo,neg):={\theschool(logo,neg,en)}}
 
 % Comiittee printing order
 % \committeeorder():={c,r,a,m}%
@@ -102,14 +117,6 @@
 \margin(cover,right):={2.0cm}
 \margin(cover,2-1,top):={6.6cm}
 
-
-\newdata{dissertationplan}
-\dissertationplan(mscplan,en):={Dissertation Plan}
-\dissertationplan(phdplan,en):={Thesis Plan}
-\dissertationplan(phdprop,en):={FaculdadeThesis Proposal}
-\dissertationplan(mscplan,pt):={Plano de Dissertação}
-\dissertationplan(phdplan,pt):={Plano de Tese}
-\dissertationplan(phdprop,pt):={Proposta de Tese}
 
 \SpineSetup[%
   \def\spnimg{nova-fct-spine-red}%
@@ -167,8 +174,7 @@
   \node[anchor=north west, text width=10cm] 
     at ($(current page.north west) + (96.45mm,-11.4mm)$)
     { \fontsize{14}{14}\sffamily%
-      \let\oldnewline=\\%
-      \def\\{\oldnewline[2pt]}%
+      DEPARTMENT OF\\[2pt]
       \THEdepartment(\@LANG@COVER)
     };
 }
@@ -192,11 +198,11 @@
 \ntaddtocover[halign=l,height=3.0cm,valign=c]{1-1}{%
   \ifphddoc{%
     \fontsize{22}{21}\selectfont%
-    \textbf{\THEdoctitle(\@LANG@COVER,main,cover)}%
+    \textbf{\THEdoctitle(\@LANG@COVER,main)}%
     \ifdatadefined{doctitle}(\@LANG@COVER,sub,cover){%
       \\[4mm]%
       \fontsize{14}{14}\selectfont%
-      \textbf{\THEdoctitle(\@LANG@COVER,sub,cover)}%
+      \textbf{\THEdoctitle(\@LANG@COVER,sub)}%
     }{}%
   }{%
     \fontsize{17}{17}\selectfont%
@@ -216,11 +222,11 @@
     \thedocauthor(degree,\@LANG@COVER)%
   }{%
     \fontsize{22}{21}\selectfont%
-    \textbf{\THEdoctitle(\@LANG@COVER,main,cover)}%
+    \textbf{\THEdoctitle(\@LANG@COVER,main)}%
     \ifdatadefined{doctitle}(\@LANG@COVER,sub,cover){%
       \\[4mm]%
       \fontsize{14}{14}\selectfont%
-      \textbf{\THEdoctitle(\@LANG@COVER,sub,cover)}%
+      \textbf{\THEdoctitle(\@LANG@COVER,sub)}%
     }{}%
   }%
 }
@@ -276,11 +282,11 @@
 % Title of Dissertation (PhD)
 \ntaddtocover[halign=l]{2-1}{%
   \fontsize{17}{17}\selectfont%
-  \textbf{\THEdoctitle(\@LANG@COVER,main,cover)}%
+  \textbf{\THEdoctitle(\@LANG@COVER,main)}%
   \ifdatadefined{doctitle}(\@LANG@COVER,sub,cover){%
     \\[4mm]%
     \fontsize{12}{12}\selectfont%
-    \textbf{\THEdoctitle(\@LANG@COVER,sub,cover)}%
+    \textbf{\THEdoctitle(\@LANG@COVER,sub)}%
   }{}%
 }
 
