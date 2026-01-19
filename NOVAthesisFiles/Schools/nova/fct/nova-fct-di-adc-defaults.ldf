@@ -15,7 +15,7 @@
 
 \def\@novafctcovercolor{red}
 
-\input{NOVAthesisFiles/Schools/nova/fct/nova-fct-red-defaults.ldf}
+\input{\DIRSCHOOLS/nova/fct/nova-fct-red-defaults.ldf}
 
 \ntsetup{doctype=bsc}
 
@@ -55,11 +55,11 @@
 
 \copyrighttextstring(en)={The \theschool(\@LANG@COPYRIGHT)\ and the \theuniversity(\@LANG@COPYRIGHT)\ have the perpetual right to archive this report in printed copies reproduced on paper or digitally, or by any other means known or invented, undertaking to keep it under controlled and restricted access in order to meet their legal obligations.}
 
-\ntsetup{spine/layout=off}
+\ntsetup{spine/layout=false}
 
 \AtEndPreamble{
-\ntdepartment(pt){Departamento de\\Informática}
-\ntdepartment(en){Department of\\Computer Science}
+\ntdepartment(pt){Informática}
+\ntdepartment(en){Computer Science}
 \ntdegreename(pt){Informática}
 \ntdegreename(en){Computer Science}
 \specialization(pt):={APDC — Relatório de Estágio em Empresa\ifoptionvoid{/novathesis/nova/fct/company/name}{}{ — \option{/novathesis/nova/fct/company/name}}}%

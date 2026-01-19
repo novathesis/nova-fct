@@ -155,6 +155,26 @@
 }
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Utility function
+%% for prinitng department names with increased spacing in "\\"
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\printdwithvspace}[2][2pt]{%
+  \protected@edef\@tempcontent{#2}%
+  \expandafter\in@\expandafter\\\expandafter{\@tempcontent}%
+  \ifin@
+    \begingroup
+      \let\orig@backslash\\%
+      \def\\{\orig@backslash[#1]}%
+      #2%
+    \endgroup
+  \else
+    \\[#1] #2%
+  \fi
+}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Draw the cover pages
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -259,8 +279,8 @@
   \fontsize{18}{17}\selectfont%
   \iftoggle{/novathesis/print/timestamp}
     {\ifdocworking{\emph{\color{blue}\textbf{Draft:} \today}}%
-                  {\printisodate{\thentdocdate(submission,year)-\thentdocdate(submission,month)}}}%
-    {\printisodate{\thentdocdate(submission,year)-\thentdocdate(submission,month)}}%
+                  {\printisodate{\GetDocDate(submission,year)-\GetDocDate(submission,month)}}}%
+    {\printisodate{\GetDocDate(submission,year)-\GetDocDate(submission,month)}}%
 }
 
 
@@ -281,7 +301,7 @@
 %   \raisebox{9mm}{%
 %   \begin{minipage}[b]{9cm}%
 %     \fontsize{14}{14}\selectfont%
-%     \ToUppercase{\thedepartment(\@LANG@COVER)}%
+%     \ToUppercase{\GetDepartment(\@LANG@COVER)}%
 %   \end{minipage}%
 %   }\\[4ex]%
 %   \hrule width 19cm%
@@ -295,7 +315,8 @@
     {\includegraphics[width=35.3mm]{\expanded{\theschool(logo)}}};%
   \draw[thick] ($(current page.north west) + (1cm,-4.1cm)$) -- ++(\paperwidth-2cm,0cm);%
   \node[anchor=north west] at ($(current page.north west) + (96.45mm,-11.4mm)$)
-    {\fontsize{14}{14}\sffamily\makecell[tl]{\ToUppercase{\thedepartment(\@LANG@COVER)}}};%
+    {\fontsize{14}{14}\sffamily\makecell[tl]{\ToUppercase{\thedepartmentofstring(\@LANG@COVER)}
+      \printdwithvspace{\ToUppercase{\GetDepartment(\@LANG@COVER)}}}};%
 }
 
 % Company logo
@@ -359,8 +380,8 @@
   \theuniversity(\@LANG@COVER)\\[1pt]%
   \iftoggle{/novathesis/print/timestamp}{%
     \ifdocworking{\emph{\color{blue}\textbf{Draft:} \today}}%
-                 {\printisodate{\thentdocdate(submission,year)-\thentdocdate(submission,month)}}%
-  }{\printisodate{\thentdocdate(submission,year)-\thentdocdate(submission,month)}}%
+                 {\printisodate{\GetDocDate(submission,year)-\GetDocDate(submission,month)}}%
+  }{\printisodate{\GetDocDate(submission,year)-\GetDocDate(submission,month)}}%
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

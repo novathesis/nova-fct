@@ -141,6 +141,26 @@
 
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Utility function
+%% for prinitng department names with increased spacing in "\\"
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\makeatletter
+\newcommand{\printdwithvspace}[2][2pt]{%
+  \protected@edef\@tempcontent{#2}%
+  \expandafter\in@\expandafter\\\expandafter{\@tempcontent}%
+  \ifin@
+    \begingroup
+      \let\orig@backslash\\%
+      \def\\{\orig@backslash[#1]}%
+      #2%
+    \endgroup
+  \else
+    \\[#1] #2%
+  \fi
+}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Draw the cover pages
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -174,8 +194,8 @@
   \node[anchor=north west, text width=10cm] 
     at ($(current page.north west) + (96.45mm,-11.4mm)$)
     { \fontsize{14}{14}\sffamily%
-      \ToUppercase{\thedepartmentofstring(\@LANG@COVER)}\\[2pt]
-      \ToUppercase{\thedepartment(\@LANG@COVER)}
+      \ToUppercase{\thedepartmentofstring(\@LANG@COVER)}
+      \printdwithvspace{\ToUppercase{\GetDepartment(\@LANG@COVER)}}
     };
 }
 
@@ -245,8 +265,8 @@
   \theuniversity(\@LANG@COVER)\\[1pt]%
   \iftoggle{/novathesis/print/timestamp}{%
     \ifdocworking{\emph{\color{yellow}\textbf{Draft:} \today}}%
-                 {\printisodate{\thentdocdate(submission,year)-\thentdocdate(submission,month)}}%
-  }{\printisodate{\thentdocdate(submission,year)-\thentdocdate(submission,month)}}%
+                 {\printisodate{\GetDocDate(submission,year)-\GetDocDate(submission,month)}}%
+  }{\printisodate{\GetDocDate(submission,year)-\GetDocDate(submission,month)}}%
 }
 
 
@@ -326,8 +346,8 @@
   \theuniversity(\@LANG@COVER)\\[1pt]%
   \iftoggle{/novathesis/print/timestamp}{%
     \ifdocworking{\emph{\color{blue}\textbf{Draft:} \today}}%
-                 {\printisodate{\thentdocdate(submission,year)-\thentdocdate(submission,month)}}%
-  }{\printisodate{\thentdocdate(submission,year)-\thentdocdate(submission,month)}}%
+                 {\printisodate{\GetDocDate(submission,year)-\GetDocDate(submission,month)}}%
+  }{\printisodate{\GetDocDate(submission,year)-\GetDocDate(submission,month)}}%
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
