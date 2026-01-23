@@ -4,7 +4,7 @@
 %%  NOVATHESIS — novathesis.cls
 %% ----------------------------------------------------------------------------
 %%
-%% Version 7.9.4 (2026-01-19)
+%% Version 7.9.5 (2026-01-23)
 %% Copyright (C) 2004-26 by João M. Lourenço <joao.lourenco@fct.unl.pt>
 %% Departamento de Informática (www.di.fct.unl.pt)
 %% Faculdade de Ciências e Tecnologia (www.fct.unl.pt)
@@ -77,7 +77,7 @@
 %%      or in the subreddit r/novathesis
 %%          https://www.reddit.com/r/novathesis/
 
-\ProvidesClass{novathesis}[Version 7.9.4 (2026-01-19) novathesis template class file]
+\ProvidesClass{novathesis}[Version 7.9.5 (2026-01-23) novathesis template class file]
 \NeedsTeXFormat{LaTeX2e}[2020-02-02]
 
 %% ----------------------------------------------------------------------------
@@ -297,7 +297,7 @@
 %   \showlabels[\color{\debugindexcolor}]{index}}%
 % }{}
 \AtEndPreamble{
-  \RequirePackage[autobib=true,nocite=false]{aidisclose}
+  \RequirePackage[autobib=true,nocite=false]{aidisclose2}
 }
 
 
@@ -2547,7 +2547,7 @@
   \ifoptionequal{/novathesis/print/aidisclosure}{aidisclose}{
     % \RequirePackage[autobib=true,nocite=false]{aidisclose} % AI disclose declaration
     \input{\DIRCONFIG/7-aidisclose}
-  }{\gdef\gaiversion{0.0.0}}
+  }{\gdef\aidversion{0.0.0}}
 }
 
 
