@@ -2,7 +2,7 @@
 -----------------------------------------------------------------------------
 NOVATHESIS — README.md
 
-Version 7.10.0 (2026-02-04)
+Version 7.10.1 (2026-02-12)
 Copyright (C) 2004-26 by João M. Lourenço <joao.lourenco@fct.unl.pt>
 -----------------------------------------------------------------------------
 -->
@@ -247,7 +247,7 @@ Otherwise, download the default/main repository (last in the list).
 
 <table>
 <tr><th>Inst. Politécnico Lisboa</th><th>&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Inst. Politécnico Setúbal</th><th>&nbsp;&nbsp;&nbsp;&nbsp;</th><th>NOVAthesis</th></tr>
-<tr><th>SEL</th><th></th><th>ESTS</th><th></th><th>main repo</th></tr>
+<tr><th>ISEL</th><th></th><th>ESTS</th><th></th><th>main repo</th></tr>
 <tr><td align="center">
 
 | <img height="50" alt="ipl-isel" src="https://raw.githubusercontent.com/joaomlourenco/novathesis/gh-pages/Showcase/Covers/JPG/ipl-isel-msc-en.jpg" />  |

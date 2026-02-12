@@ -4,7 +4,7 @@
 %%  NOVATHESIS — novathesis.cls
 %% ----------------------------------------------------------------------------
 %%
-%% Version 7.10.0 (2026-02-04)
+%% Version 7.10.1 (2026-02-12)
 %% Copyright (C) 2004-26 by João M. Lourenço <joao.lourenco@fct.unl.pt>
 %% Departamento de Informática (www.di.fct.unl.pt)
 %% Faculdade de Ciências e Tecnologia (www.fct.unl.pt)
@@ -77,7 +77,7 @@
 %%      or in the subreddit r/novathesis
 %%          https://www.reddit.com/r/novathesis/
 
-\ProvidesClass{novathesis}[Version 7.10.0 (2026-02-04) novathesis template class file]
+\ProvidesClass{novathesis}[Version 7.10.1 (2026-02-12) novathesis template class file]
 \NeedsTeXFormat{LaTeX2e}[2024-06-01]
 
 %% ----------------------------------------------------------------------------
@@ -135,7 +135,6 @@
 \RequirePackage[table,svgnames]{xcolor} % First to avoid option clashes
 \RequirePackage{iftex}
 \RequirePackage{ifplatform}
-\RequirePackage{xparse}
 \RequirePackage{xfor}
 \RequirePackage{etoolbox}
 \RequirePackage{xstring}
@@ -204,7 +203,6 @@
 \RequirePackage[nobeamer]{graphbox} % Loads graphicx
 \RequirePackage{colortbl}
 \RequirePackage{xurl} % Loads 'url' with better breaking
-\RequirePackage{url}  % (Technically redundant due to xurl, but kept as requested)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 6. BIBLIOGRAPHY & INDEXING
@@ -908,7 +906,7 @@
   print/webography/.new value   = {},      % empty means do not make a separate webography
   print/statement/.new toggle   = false,
   print/sdgs/list/.new list     = {},      % {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17}
-  print/sgds/type/.new choice   = {inverted=i, normal=n, mono=m},   % any measure
+  print/sdgs/type/.new choice   = {inverted=i, normal=n, mono=m},   % any measure
   print/sdgs/size/.new dim      = {2cm},   % any measure
   print/sdgs/hspace/.new dim    = {5mm},   % any measure
   print/sdgs/vspace/.new dim    = {4mm},   % any measure
@@ -1056,7 +1054,7 @@
   % Truy curl
   \bool_if:NF \l_tmpa_bool
     {
-      \iow_term:x { Tyying:~'curl'... }
+      \iow_term:x { Trying:~'curl'... }
       \sys_get_shell:nnN  { curl ~ --version ~ 2> ~ /dev/null }
                           { \tl_trim_spaces:n }
                           \l_nt_cmd_output_tl
@@ -1093,7 +1091,7 @@
       \tl_if_blank:nF { \tl_use:N \l_nt_cmd_output_tl }
         { % python3 is available
           \iow_term:x { Running: ~ python3 ~ -c ~ "import ~ urllib.request; ~ urllib.request.urlretrieve('#1', ~ '#2')" ~ 2>/dev/null ~ || ~ python ~ -c ~ "import ~ urllib.request; ~ urllib.request.urlretrieve('#1', ~ '#2')" ~ 2>/dev/null"... }
-          \sys_shell_now:x { python3 ~ -c ~ "import ~ urllib.request; ~ urllib.request.urlretrieve('#1', ~ '#2')" ~ 2>/dev/null ~ || ~ python ~ -c ~ "import ~ urllib.request; ~ urllib.request.urlretrieve('#1', ~ '#2')" ~ 2>/dev/null ~ || ~ echo ~ "ªython3: ~ No ~ download ~ tool ~ available" }
+          \sys_shell_now:x { python3 ~ -c ~ "import ~ urllib.request; ~ urllib.request.urlretrieve('#1', ~ '#2')" ~ 2>/dev/null ~ || ~ python ~ -c ~ "import ~ urllib.request; ~ urllib.request.urlretrieve('#1', ~ '#2')" ~ 2>/dev/null ~ || ~ echo ~ "python3: ~ No ~ download ~ tool ~ available" }
           \bool_set_true:N \l_tmpa_bool
         }
     }
@@ -1127,8 +1125,8 @@
                            \l_nt_cmd_output_tl
       \tl_if_blank:nF { \tl_use:N \l_nt_cmd_output_tl }
           { % powershell is available
-            \iow_term:x ~ { ~ powershell ~ -Command ~ "Invoke-WebRequest ~ -Uri ~ '\l__nt_remote_url_tl' ~ -OutFile ~ '#1'" ~ }
-            \sys_shell_now:x ~ { ~ powershell ~ -Command ~ "Invoke-WebRequest ~ -Uri ~ '\l__nt_remote_url_tl' ~ -OutFile ~ '#1'" ~ }
+            \iow_term:x ~ { ~ powershell ~ -Command ~ "Invoke-WebRequest ~ -Uri ~ '\l__nt_remote_url_tl' ~ -OutFile ~ '#2'" ~ }
+            \sys_shell_now:x ~ { ~ powershell ~ -Command ~ "Invoke-WebRequest ~ -Uri ~ '\l__nt_remote_url_tl' ~ -OutFile ~ '#2'" ~ }
             \bool_set_true:N \l_tmpa_bool
           }
       }
@@ -1281,8 +1279,8 @@
   \ifoptioncontains{/@nt/listtypes}{#2}{}
       {\options{/@nt/listtypes/.newpush={#2}}}
   \IfBeginsWithAnyOf{#4}{/,.}
-      {\ifstrequal{#2}{copyright}{\OPTi}{}\xdef\@nt@filewithpath{#4}}
-      {\ifstrequal{#2}{copyright}{\OPTii}{}\options{/@nt/folders=#2}%
+      {\xdef\@nt@filewithpath{#4}}
+      {\options{/@nt/folders=#2}%
        \xdef\@nt@filewithpath{\option{/@nt/folders}/#4}}
   \ifstrequal{#1}{statement}{
     \typeout{STATEMENT [#1] [#2] [#3]}\AAAA
@@ -1682,7 +1680,7 @@
             {\@DOCCLASS,\@LANG@COVER},%
             {\@LANG@COVER}%
   )%
-  \ifblank{\match}{\specialization(#1)={#2}}{\specialization(#1)={\specmatch\ #2}}%
+  \ifblank{\specmatch}{\specialization(#1)={#2}}{\specialization(#1)={\specmatch\ #2}}%
   \minorfield(#1)={#2}%
 }
 
@@ -2376,18 +2374,20 @@
 }
 
 
-\ifoptionequal{/novathesis/spine/layout}{off}{}{% print the spine
-  \InputIfFileExistsInDirsTF {novathesis-spine.sty}
-    {%
-      {\DIRSCHOOLS/\@UNIV/\@SCHL/},
-      {\DIRSCHOOLS/\@UNIV/},
-      {\DIRSTYFILES/},
-    }
-    {%
-      \ifmaindoc{\AtEndDocument{\csuse{ntprintspine}}}{}%
-    }
-    {\ClassError{novathesis}{No “novathesis-spine” file found.}{}}%
-}
+\InputIfFileExistsInDirsTF {novathesis-spine.sty}
+  {%
+    {\DIRSCHOOLS/\@UNIV/\@SCHL},
+    {\DIRSCHOOLS/\@UNIV},
+    {\DIRSTYFILES},
+  }
+  {} % true
+  {\ClassError{novathesis}{No “novathesis-spine” file found.}{}}%
+
+\ifoptionequal{/novathesis/spine/layout}{false}
+  {}% skip the spine
+  {% print the spine 
+    \ifmaindoc{\AtEndDocument{\csuse{ntprintspine}}}{}%
+  }
 
 
 
@@ -2547,7 +2547,7 @@
     \thispagestyle{empty}%
     \setCoverBgColor{#1-#2}%
     \setCoverBgImage{#1-#2}%
-    \prrintCoverText{#1-#2}%
+    \printCoverText{#1-#2}%
     % \@ntmakeboxwithcover{#1-#2}{\@fullcover@box}%
     \printCoverTikz{#1-#2}%
     \NTRunHook{cover/#1-#2/post}%
@@ -2592,7 +2592,7 @@
   \NTRunHook{cover/#1/image/post}%
 }
 
-\newcommand{\prrintCoverText}[1]{
+\newcommand{\printCoverText}[1]{
   \null%
   \datamatchtf{\match}{thesiscover}(%
               {\@DOCTYPE,\@DEGREEACR,#1,textcolor}%
@@ -3301,7 +3301,7 @@
       \vfill%
       \raggedright\noindent%
       \textbf{\thesdgstring(\@LSHORT):}\\[1ex]
-      \edef\@sdgtype{\option{/novathesis/print/sgds/type}}
+      \edef\@sdgtype{\option{/novathesis/print/sdgs/type}}
       \IfFileExists{\DIRIMAGES/sdg-\@LSHORT/1-\@sdgtype.pdf}
           {\def\@spnfolder{\DIRIMAGES/sdg-\@LSHORT}}
           {\def\@spnfolder{\DIRIMAGES/sdg-en}}
