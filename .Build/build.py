@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
 NOVATHESIS Build Assistant
 
-Version 7.10.1 (2026-02-12)
+Version 7.10.2 (2026-02-28)
 Copyright (C) 2004-26 by João M. Lourenço <joao.lourenco@fct.unl.pt>
 -----------------------------------------------------------------------------
 
@@ -403,7 +403,7 @@ def prepare_temp_workspace(project_root: Path, build_dir: Optional[str]) -> Path
     ignore = shutil.ignore_patterns(
         "*.aux", "*.log", "*.toc", "*.out", "*.fls", "*.fdb_latexmk",
         "*.synctex*", "*.bbl", "*.blg",
-        ".git", ".gitignore", ".DS_Store", "AUXDIR"
+        ".git", ".gitignore", ".DS_Store", "AUXDIR", "aidisclose.bib"
     )
     _copytree_symlinking(project_root, tmpdir, ignore=ignore)
     

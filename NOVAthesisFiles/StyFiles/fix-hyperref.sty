@@ -7,52 +7,11 @@
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\typeout{NT FILE fix-hyperref.sty}%
+\typeout{NT FILE fix-hyperref.sty}
 
 \def\HyLang@portuguese{\HyLang@portuges}
 
 \newcommand{\@nt@fixhyperref}{
-  % \def\HyLang@DeclareLang##1##2##3{%
-  %   \@ifpackagewith{babel}{##1}{%
-  %     \expandafter\HyLang@addto
-  %         \csname extras##1\expandafter\endcsname
-  %         \csname HyLang@##2\endcsname
-  %     \begingroup
-  %       \edef\x{\endgroup
-  %         ##3%
-  %       }%
-  %     \x
-  %     \@namedef{HyLang@##1@done}{}%
-  %   }{% added check for "main=##1" (presumably Heiko can do better)
-  %     \@ifpackagewith{babel}{main=##1}{%
-  %       \expandafter\HyLang@addto
-  %         \csname extras##1\expandafter\endcsname
-  %         \csname HyLang@##2\endcsname
-  %       \begingroup
-  %         \edef\x{\endgroup
-  %           ##3%
-  %         }%
-  %       \x
-  %       \@namedef{HyLang@##1@done}{}%
-  %      }{}%
-  %   }%
-  %   \begingroup
-  %     \edef\x####1####2{%
-  %       \noexpand\ifx####2\relax
-  %         \errmessage{No definitions for language ##2' found!}%
-  %       \noexpand\fi
-  %       \endgroup
-  %       \noexpand\define@key{Hyp}{##1}[]{%
-  %         \noexpand\@ifundefined{HyLang@##1@done}{%
-  %           \noexpand\HyLang@addto{\noexpand####1}{\noexpand####2}%
-  %           ##3%
-  %           \noexpand\@namedef{HyLang@##1@done}{}%
-  %         }{}%
-  %       }%
-  %     }%
-  %   \expandafter\x\csname extras##1\expandafter\endcsname
-  %                 \csname HyLang@##2\endcsname
-  % }
   % repeat the known language declarations
   \HyLang@DeclareLang{english}{english}{}
   \HyLang@DeclareLang{UKenglish}{english}{}
@@ -79,29 +38,54 @@
   \HyLang@DeclareLang{hungarian}{magyar}{}
 }
 
-\AtBeginDocument{
-  \RequirePackage{catoptions}
-  \def\Autoref#1{%
-    \begingroup
-    \edef\reserved@a{\cpttrimspaces{#1}}%
-    \ifcsndefTF{r@#1}{%
-      \xaftercsname{\expandafter\testreftype\@fourthoffive}
-        {r@\reserved@a}.\\{#1}%
-    }{%
-      \ref{#1}%
-    }%
-    \endgroup
+\ExplSyntaxOn
+% Declare unique variables for autoref
+\tl_new:N \l_nt_autoref_type_tl
+\tl_new:N \l_nt_autoref_name_tl
+\tl_new:N \l_nt_autoref_data_tl
+\seq_new:N \l_nt_autoref_anchor_seq
+
+% Aux function to handle label data
+% #1=ref, #2=page, #3=title, #4=anchor (e.g. section.1), #5=extra
+\cs_new_protected:Npn \nt_autoref_aux:nnnnn #1 #2 #3 #4 #5
+ {
+   % Extract type from anchor (e.g. "section" from "section.1")
+   \seq_set_split:Nnn \l_nt_autoref_anchor_seq { . } { #4 }
+   \seq_get_left:NN \l_nt_autoref_anchor_seq \l_nt_autoref_type_tl 
+   
+   % Remove star if present (e.g. "chapter*" -> "chapter")
+   \regex_replace_all:nnN { \* } { } \l_nt_autoref_type_tl
+   
+   \cs_if_exist:cT { \l_nt_autoref_type_tl autorefname }
+    {
+      % Get current autorefname
+      \tl_set_eq:Nc \l_nt_autoref_name_tl { \l_nt_autoref_type_tl autorefname }
+      % Titlecase it (first letter uppercase) - uses helper from novathesis.cls
+      \nt_titlecase_first:N \l_nt_autoref_name_tl
+      % Redefine locally within the group established in \Autoref
+      \cs_set:cpe { \l_nt_autoref_type_tl autorefname } { \tl_use:N \l_nt_autoref_name_tl }
+    }
+ }
+
+\cs_new_protected:Nn \nt_autoref_logic:n
+ {
+  \group_begin:
+  \cs_if_exist:cT { r@ \tl_to_str:n { #1 } }
+   {
+     \tl_set_eq:Nc \l_nt_autoref_data_tl { r@ \tl_to_str:n { #1 } }
+     \exp_last_unbraced:NV \nt_autoref_aux:nnnnn \l_nt_autoref_data_tl
+   }
+  \autoref{#1}
+  \group_end:
+ }
+
+\AtBeginDocument
+ {
+  \@nt@fixhyperref
+  \DeclareRobustCommand{\Autoref}[1]{ 
+    \ExplSyntaxOn
+    \nt_autoref_logic:n {#1} 
+    \ExplSyntaxOff
   }
-  \def\testreftype#1.#2\\#3{%
-    \ifcsndefTF{#1autorefname}{%
-      \def\reserved@a##1##2\@nil{%
-        \uppercase{\def\ref@name{##1}}%
-        \csn@edef{#1autorefname}{\ref@name##2}%
-        \autoref{#3}%
-      }%
-      \reserved@a#1\@nil
-    }{%
-      \autoref{#3}%
-    }%
-  }
-}
+ }
+\ExplSyntaxOff

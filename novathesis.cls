@@ -4,7 +4,7 @@
 %%  NOVATHESIS — novathesis.cls
 %% ----------------------------------------------------------------------------
 %%
-%% Version 7.10.1 (2026-02-12)
+%% Version 7.10.2 (2026-02-28)
 %% Copyright (C) 2004-26 by João M. Lourenço <joao.lourenco@fct.unl.pt>
 %% Departamento de Informática (www.di.fct.unl.pt)
 %% Faculdade de Ciências e Tecnologia (www.fct.unl.pt)
@@ -77,8 +77,8 @@
 %%      or in the subreddit r/novathesis
 %%          https://www.reddit.com/r/novathesis/
 
-\ProvidesClass{novathesis}[Version 7.10.1 (2026-02-12) novathesis template class file]
-\NeedsTeXFormat{LaTeX2e}[2024-06-01]
+\ProvidesClass{novathesis}[Version 7.10.2 (2026-02-28) novathesis template class file]
+\NeedsTeXFormat{LaTeX2e}[2023-06-01]
 
 %% ----------------------------------------------------------------------------
 % Save these definitions asap, to be used later in the “\annex” command,
@@ -117,17 +117,6 @@
 \LoadClass{memoir}
 
 \OnehalfSpacing% One-and-half spacing
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% SOME ESSENTIAL PACKAGES
-%%    Others will be loaded later, in the file “packages.tex”
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% `l3regex` is part of the LaTeX3 kernel (expl3) in modern TeX distributions.
-% Some setups don't ship a separate `l3regex.sty` anymore, so only load it if present.
-\IfFileExists{xparse.sty}{\RequirePackage{xparse}[2024-05-08]}{}
-\IfFileExists{expl3.sty}{\RequirePackage{expl3}[2024-05-08]}{}
-\IfFileExists{l3regex.sty}{\RequirePackage{l3regex}}{}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 1. KERNEL, UTILITIES & FLAGS (Must load early)
@@ -337,15 +326,57 @@
 }
 
 
+% --------------------------------------------------------
+% Check if a list file is empty
+% --------------------------------------------------------
+\newread\nt@tempread
+\newcommand*{\nt@iflistempty}[3]{%
+  % #1 = extension (e.g., lof, lot, lol)
+  % #2 = empty-code
+  % #3 = non-empty-code
+  \IfFileExists{\jobname.#1}{%
+    \openin\nt@tempread=\jobname.#1\relax
+    \ifeof\nt@tempread
+      \closein\nt@tempread
+      #2%
+    \else
+      \closein\nt@tempread
+      #3%
+    \fi
+  }{%
+    #2%
+  }%
+}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Expl3 UTILITIES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \ExplSyntaxOn
+% Robust titlecase function: modifies the TL variable in-place
+\tl_new:N \l__nt_titlecase_head_tl
+\tl_new:N \l__nt_titlecase_tail_tl
+\cs_new_protected:Nn \nt_titlecase_first:N
+ {
+   \tl_if_empty:NF #1
+    {
+      \tl_set:Ne \l__nt_titlecase_head_tl { \tl_head:N #1 }
+      \tl_set:Ne \l__nt_titlecase_tail_tl { \tl_tail:N #1 }
+      \tl_set:Ne #1 { \exp_not:N \MakeUppercase { \l__nt_titlecase_head_tl } \l__nt_titlecase_tail_tl }
+    }
+ }
 
 \NewExpandableDocumentCommand {\ToUppercase} { m }
   {
-    \text_uppercase:n { #1 }
+    \MakeUppercase { #1 }
+  }
+
+\DeclareDocumentCommand {\MakeTitlecase} { m }
+  {
+    \tl_set:Ne \l_tmpa_tl { #1 }
+    \nt_titlecase_first:N \l_tmpa_tl
+    \tl_use:N \l_tmpa_tl
   }
 
 %=======================================================================
@@ -514,11 +545,8 @@
 % non-starred stops on first sucess
 % =========================================================
 
-
 \bool_new:N \l_file_found_bool
 \tl_new:N \l_file_action_tl
-
-
 \NewDocumentCommand{\IfFileExistsInDirsTF}{ s O{} m m m m }
  {
   \group_begin:
@@ -526,7 +554,6 @@
     \tl_new:N \l_tmp_path_tl
     \tl_new:N \l_tmp_last_char_tl
     
-    \bool_gset_false:N \g_file_found_bool
     
     % Define an internal "action" function that takes one argument (#1)
     % This makes the user's code (#5) act like a function body.
@@ -566,14 +593,11 @@
 
 \NewDocumentCommand{\IfFileExistsCase}{ s O{} m m }
   {
-    \bool_set_false:N \l_file_found_bool
-    
     \clist_map_inline:nn { #3 }
       {
         % ##1 is {filepath}{action}
         \__filecase_split_pair:nnn { #1 } { #2 } ##1
       }
-    
     % Else branch
     \bool_if:NF \l_file_found_bool { #4 }
   }
@@ -582,7 +606,7 @@
 % #2: Prefix
 % #3: Filename
 % #4: Action
-\cs_new:Npn \__filecase_split_pair:nnn #1 #2 #3 #4
+\cs_new:Npn \__filecase_split_pair:nnn #1 #2 #3 #4 
   {
     % 1. Construct the full path
     \tl_set:Nn \l_tmpa_tl { #2 #3 }
@@ -591,12 +615,14 @@
       {
         \bool_set_true:N \l_file_found_bool
         
-        % 2. Create a copy and strip the extension
         \tl_set_eq:NN \l_tmpb_tl \l_tmpa_tl
         
         % Regex: Match a dot, followed by non-dots and non-slashes, until end of string.
         % This ensures we don't accidentally match a dot in a directory name (e.g. "ver.1/img").
         \regex_replace_once:nnN { \.[^./]* \Z } { } \l_tmpb_tl
+
+        \xdef\ntfoundpath{\l_tmpa_tl}
+        \xdef\ntfoundpathnoext{\l_tmpb_tl}
         
         % 3. Define the internal action to accept TWO arguments:
         %    ##1 = Full Path (e.g., images/logo.png)
@@ -610,7 +636,6 @@
         \bool_if:NF #1 { \clist_map_break: }
       }
   }
-
 
 
 \NewDocumentCommand{\IfFontExistsCase}{ s m m }
@@ -652,7 +677,6 @@
 
 
 % 1. Create variables
-\tl_new:N \l_found_path_tl
 
 \NewDocumentCommand{\InputIfFileExistsInDirsTF}{ m m +m +m }
   {
@@ -716,7 +740,6 @@
   \__user_chapter_logic:e { #1 }
  }
 
-
 \NewDocumentCommand{\UniquifyList}{m o}
   {
     \clist_set:Ne \l_tmpa_clist {#1}
@@ -730,7 +753,6 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PACKAGE
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % --------------------------------------------------------
 \def\@nt@saveabstractorder{}
@@ -745,10 +767,10 @@
   }%
 }
 
+\ExplSyntaxOn
 
 % --------------------------------------------------------
 % Search if a data/memory is defined and returns value
-\ExplSyntaxOn
 
 % Define a boolean to track if a match was found inside the loop
 \bool_new:N \l__memory_match_found_bool
@@ -963,10 +985,12 @@
 }
 
 
+
+\ExplSyntaxOn
+
 % --------------------------------------------------------
 % Automatically download necessary fonts if using lualatex
 % --------------------------------------------------------
-\ExplSyntaxOn
 
 \NewDocumentCommand{\ntcheckfonts}{
     O{ttf}
@@ -1138,7 +1162,6 @@
 % --------------------------------------------------------
 % Trim spaces around argument
 \cs_new_eq:NN \trimspaces \tl_trim_spaces:e
-
 
 \ExplSyntaxOff
 
@@ -1577,10 +1600,11 @@
 %% DEFINITIONS FOR THE REMINDER OF CUSTOMIZATION STUFF
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\ExplSyntaxOn
+
 % --------------------------------------------------------
 % Department
 %============================================================
-\ExplSyntaxOn
 
 \NewMemStore{Department}
 
@@ -1629,7 +1653,6 @@
 \cs_generate_variant:Nn \nova_process_department:nnn { nee }
 
 \ExplSyntaxOff
-
 
 
 %
@@ -1701,6 +1724,7 @@
   \IfStrEq{#1}{main}{\doctitle(#2,spine):={\tmp}}{}%
 }
 
+
 \ExplSyntaxOn
 
 % Define a temporary token list variable
@@ -1757,7 +1781,9 @@
     
     % Case 2: Year and Month (YYYY-MM)
     { 2 } { 
-      \MakeTitlecase { \babelmonthname { \seq_item:Nn \l_nt_date_seq { 2 } } }
+      \tl_set:Ne \l_tmpa_tl { \babelmonthname { \seq_item:Nn \l_nt_date_seq { 2 } } }
+      \nt_titlecase_first:N \l_tmpa_tl
+      \tl_use:N \l_tmpa_tl
       ,~  % separator
       \seq_item:Nn \l_nt_date_seq { 1 }  % year
     }
@@ -1798,27 +1824,27 @@
     % Case: YYYY
     { 1 } 
      {
-      \MemSet { DocDate } { #1, year } { \seq_item:Nn \l_nt_parts_seq { 1 } }
+      \MemSet* { DocDate } { #1, year } { \seq_item:Nn \l_nt_parts_seq { 1 } }
      }
     
     % Case: YYYY-MM
     { 2 }
      {
-      \MemSet { DocDate } { #1, year }  { \seq_item:Nn \l_nt_parts_seq { 1 } }
-      \MemSet { DocDate } { #1, month } { \seq_item:Nn \l_nt_parts_seq { 2 } }
+      \MemSet* { DocDate } { #1, year }  { \seq_item:Nn \l_nt_parts_seq { 1 } }
+      \MemSet* { DocDate } { #1, month } { \seq_item:Nn \l_nt_parts_seq { 2 } }
       % Use Babel's \monthname to get the localized text
-      \MemSet { DocDate } { #1, month, text } 
-        { \monthname [ \seq_item:Nn \l_nt_parts_seq { 2 } ] }
+      \MemSet* { DocDate } { #1, month, text } 
+        { \babelmonthname { \seq_item:Nn \l_nt_parts_seq { 2 } } }
      }
     
     % Case: YYYY-MM-DD
     { 3 }
      {
-      \MemSet { DocDate } { #1, year }  { \seq_item:Nn \l_nt_parts_seq { 1 } }
-      \MemSet { DocDate } { #1, month } { \seq_item:Nn \l_nt_parts_seq { 2 } }
-      \MemSet { DocDate } { #1, month, text } 
-        { \monthname [ \seq_item:Nn \l_nt_parts_seq { 2 } ] }
-      \MemSet { DocDate } { #1, day }   { \seq_item:Nn \l_nt_parts_seq { 3 } }
+      \MemSet* { DocDate } { #1, year }  { \seq_item:Nn \l_nt_parts_seq { 1 } }
+      \MemSet* { DocDate } { #1, month } { \seq_item:Nn \l_nt_parts_seq { 2 } }
+      \MemSet* { DocDate } { #1, month, text } 
+        { \babelmonthname { \seq_item:Nn \l_nt_parts_seq { 2 } } }
+      \MemSet* { DocDate } { #1, day }   { \seq_item:Nn \l_nt_parts_seq { 3 } }
      }
    }
  }
@@ -1870,7 +1896,6 @@
 %============================================================
 % Adding list_of
 \newcommand*{\ntaddlistof}[2][]{%
-  % #1 = frontmatter, backmatter
   % #2 = the list of SOMETHING without the initial "\"
   \@ifmtarg{#1}{%
     \edef\@listofat{\option{/novathesis/print/otherlists}}%
@@ -1880,45 +1905,71 @@
   % \typeout{\ISTOF 1=[\@listofat] 2=[#2]}\NTADDLISTOF%
   \IfStrEqCase{#2}{%
     {tableofcontents}{\options{/@nt/listof/\@listofat/.newpush={%
+            \clearforchapter%
             \iftoggle{/novathesis/tocintoc}{\tableofcontents}%
                   {\hypertarget{toctarget}{\tableofcontents*}%
                    \bookmark[dest=toctarget]{\contentsname}}%
     }}}%
     {listoffigures*}{\options{/@nt/listof/\@listofat/.newpush={%
-            \hypertarget{loftarget}{\listoffigures*}%
-            \bookmark[dest=loftarget]{\listfigurename}%
+            \nt@iflistempty{lof}{}{%
+              \clearforchapter%
+              \hypertarget{loftarget}{\listoffigures*}%
+              \bookmark[dest=loftarget]{\listfigurename}%
+            }%
     }}}%
     {listoffigures}{\options{/@nt/listof/\@listofat/.newpush={%
-            \hypertarget{loftarget}{\listoffigures}%
-            % \bookmark[dest=loftarget,level=1]{\listfigurename}%
+            \nt@iflistempty{lof}{}{%
+              \clearforchapter%
+              \hypertarget{loftarget}{\listoffigures}%
+              % \bookmark[dest=loftarget,level=1]{\listfigurename}%
+            }%
     }}}%
     {listoftables*}{\options{/@nt/listof/\@listofat/.newpush={%
-            \hypertarget{lottarget}{\listoftables*}%
-            \bookmark[dest=lottarget]{\listtablename}%
+            \nt@iflistempty{lot}{}{%
+              \clearforchapter%
+              \hypertarget{lottarget}{\listoftables*}%
+              \bookmark[dest=lottarget]{\listtablename}%
+            }%
     }}}%
     {listoftables}{\options{/@nt/listof/\@listofat/.newpush={%
-            \hypertarget{lottarget}{\listoftables}%
-            % \bookmark[dest=lottarget]{\listtablename}%
+            \nt@iflistempty{lot}{}{%
+              \clearforchapter%
+              \hypertarget{lottarget}{\listoftables}%
+              % \bookmark[dest=lottarget]{\listtablename}%
+            }%
     }}}%
     {listoflistings}{\options{/@nt/listof/\@listofat/.newpush={%
-            \hypertarget{loltarget}{\listoflistings}%
-            \bookmark[dest=loltarget]{\listoflistingscaption}%
+            \ifdefined\listoflistings
+              \nt@iflistempty{lol}{}{%
+                \clearforchapter%
+                \hypertarget{loltarget}{\listoflistings}%
+                \ifdefined\listoflistingscaption
+                  \bookmark[dest=loltarget]{\listoflistingscaption}%
+                \fi
+              }%
+            \fi
     }}}%
     {lstlistoflistings}{\options{/@nt/listof/\@listofat/.newpush={%
-            \hypertarget{loltarget}{\lstlistoflistings}%
-            % \bookmark[dest=loltarget]{\lstlistlistingname}%
+            \nt@iflistempty{lol}{}{%
+              \clearforchapter%
+              \hypertarget{loltarget}{\lstlistoflistings}%
+              % \bookmark[dest=loltarget]{\lstlistlistingname}%
+            }%
     }}}%
     {listofalgorithms}{\options{/@nt/listof/\@listofat/.newpush = {%
-            \listofalgorithms
-            \ifdefined\listalgorithmname%
-              \addcontentsline{toc}{chapter}{\listalgorithmname}%
-            \else\ifdefined\listalgorithmcfname%
-              \addcontentsline{toc}{chapter}{\listalgorithmcfname}%
-            \else
-              \ClassError{novathesis}{Can't make list of algorithms. Please report this problem in the “novathesis” github. Thanks!}{}%
-            \fi\fi}}}%
+            \nt@iflistempty{loa}{}{%
+              \clearforchapter%
+              \listofalgorithms
+              \ifdefined\listalgorithmname%
+                \addcontentsline{toc}{chapter}{\listalgorithmname}%
+              \else\ifdefined\listalgorithmcfname%
+                \addcontentsline{toc}{chapter}{\listalgorithmcfname}%
+              \else
+                \ClassError{novathesis}{Can't make list of algorithms. Please report this problem in the “novathesis” github. Thanks!}{}%
+              \fi\fi}%
+    }}}%
   }[%
-      \options{/@nt/listof/\@listofat/.newpush={\ifdefmacro{#2}{#2}{\csuse{#2}}}}%
+      \options{/@nt/listof/\@listofat/.newpush={\ifcsdef{#2}{\clearforchapter\csuse{#2}}{\csuse{#2}}}}%
    ]%
 }
 
@@ -1964,24 +2015,20 @@
           \pagestyle{empty}%
           \ntprintbackcover%
     }%
-  }[\ifdefmacro{#1}{#1}{\csuse{ntprint#1}}]%
+  }[\ifcsmacro{ntprint#1}{\csuse{ntprint#1}}{\ifcsmacro{#1}{\csuse{#1}}{}}]%
 }
 
 \newcommand*{\ntprintlist}[1]{%
   \optionlistdo{#1}{%
     \begingroup
       \clearpage
-      \ifdefmacro{##1}
-        {##1}% ##1 is defined
-        {%     ##1 is undefined
-        \ifcsmacro{ntprint##1}{%  \ntprint#1 is defined
-          \NTRunHook{ntprint##1/pre}\csuse{ntprint##1}\NTRunHook{ntprint##1/post}%
-        }{%                       \ntprint#1 is undefined
-          \ifcsmacro{##1}{%       \##1 is defined
-            \NTRunHook{##1/pre}\csuse{##1}\NTRunHook{##1/post}%
-          }{%                     nothing is defined
-            \ClassError{novathesis}{Invalid contents for frontmatter or mainmatter: [##1]}{}%
-          }%
+      \ifcsmacro{ntprint##1}{%  \ntprint#1 is defined
+        \NTRunHook{ntprint##1/pre}\csuse{ntprint##1}\NTRunHook{ntprint##1/post}%
+      }{%                       \ntprint#1 is undefined
+        \ifcsmacro{##1}{%       \##1 is defined
+          \NTRunHook{##1/pre}\csuse{##1}\NTRunHook{##1/post}%
+        }{%                     nothing is defined
+          \ClassError{novathesis}{Invalid contents for frontmatter or mainmatter: [##1]}{}%
         }%
       }%
       % \unskip%
@@ -2002,13 +2049,30 @@
           \def\@matter{frontmatter}
         \fi
         \IfStrEq{\option{/novathesis/print/glossaries}}{\@matter}{%
-          \clearforchapter%
-          \ntselectlang{\@LANG@MAIN}%
-          \hypertarget{bmglossaries}{}%
-          \bookmarksetupnext{level=0}%
-          \bookmark[dest=bmglossaries]
-                  {\thebkmstring(glossaries,\@LANG@MAIN)}%
-          \printglossaries
+          \providebool{nt@anyglossary}%
+          \boolfalse{nt@anyglossary}%
+          \ifdefined\forallglossaries
+            \forallglossaries{\nt@glstype}{%
+              \ifdefined\ifglossaryempty
+                \ifglossaryempty{\nt@glstype}{}{\booltrue{nt@anyglossary}}%
+              \else\ifdefined\glsifentries
+                \glsifentries{\nt@glstype}{\booltrue{nt@anyglossary}}{}%
+              \else
+                \booltrue{nt@anyglossary}%
+              \fi\fi
+            }%
+          \else
+            \booltrue{nt@anyglossary}%
+          \fi
+          \ifbool{nt@anyglossary}{%
+            \clearforchapter%
+            \ntselectlang{\@LANG@MAIN}%
+            \hypertarget{bmglossaries}{}%
+            \bookmarksetupnext{level=0}%
+            \bookmark[dest=bmglossaries]
+                    {\thebkmstring(glossaries,\@LANG@MAIN)}%
+            \printglossaries
+          }{}%
         }{}%
       }%
   }{}%
@@ -2489,7 +2553,7 @@
 
 \newcommand{\ntprintcoverpair}[1]{%
   % #1 = major cover ID
-  \iffileadded[1]{cover}{% Deal with user-defined cover page
+  \iffileadded[#1]{cover}{% Deal with user-defined cover page
     \iffileadded[#1]{cover}{%
       \optionlistdo{/@nt/file/cover/#1}{%
         \begingroup
@@ -3479,6 +3543,7 @@
   \xdef\Hy@chapapp{annex}%
   \setcounter{chapter}{0}%
   \setcounter{section}{0}%
+  \gdef\chaptername{\annexname}%
   % \gdef\@chapapp{\translate{annex}}%
   \gdef\thechapter{\annexcounter\c@chapter}%
 }%
@@ -3567,7 +3632,7 @@
         \bookmarksetupnext{rellevel=1}%
       \fi
       % \typeout{PRINTALLLISTOF=\@matter}\PRINTALLLISTOF
-      \optionlistdo{/@nt/listof/\@matter}{\clearforchapter##1\bookmarksetupnext{rellevel=0}}%
+      \optionlistdo{/@nt/listof/\@matter}{##1\bookmarksetupnext{rellevel=0}}%
     }{}
     \NTRunHook{listof/post}%
 }
@@ -3916,9 +3981,9 @@
 \IfFileExistsCase
   {
     {\DIRFONTSTYLES/\option{/novathesis/style/font}.sty}
-          {\input{#1}},
+          {\input{\ntfoundpath}},
     {\option{/novathesis/style/font}.sty}
-          {\RequirePackage{#2}},        
+          {\RequirePackage{\ntfoundpathnoext}},        
   }
   {
     \ifcsname IfFontExistsTF\endcsname
