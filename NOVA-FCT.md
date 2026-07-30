@@ -1,8 +1,8 @@
-# Abstract: nova-fct-novathesis-vA.B.C
+# Abstract: novathesis-nova-fct-v8.0.0
 
 This is a customized LaTeX template for theses and reports at **Faculdade de Ciências e Tecnologia da Universidade NOVA de Lisboa (NOVA FCT)**, following the most recent [NOVA FCT guidelines (in Portuguese)](https://www.fct.unl.pt/estudante/informacao-academica/teses-e-dissertacoes). 
 
-This template is a streamlined and fine-tuned version of the robust **NOVAthesis framework (vA.B.C)**, trimmed down and optimized to provide NOVA FCT students with a streamlined experience, meeting NOVA FCT's academic formatting standards without the complexity of the original multi-institution template. 
+This template is a streamlined and fine-tuned version of the robust **NOVAthesis framework (v8.0.0)**, trimmed down and optimized to provide NOVA FCT students with a streamlined experience, meeting NOVA FCT's academic formatting standards without the complexity of the original multi-institution template. 
 
 ### Key Features:
 
